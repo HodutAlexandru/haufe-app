@@ -4,7 +4,17 @@
   "description": "Haufe test application",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rm -rf build && mkdir build",
+    "build-server": "babel src --out-dir build -s --ignore src/__tests__/**",
+    "build": "npm run clean && npm run build-server",
+    "prestart": "npm run build",
+    "start": "node ./build/index.js",
+    "lint": "eslint src",
+    "test": "jest",
+    "watch-tests": "esw src & jest --watchAll",
+    "dev": "nodemon --watch ./src --ignore ./src/__tests__ -x \"npm start\"",
+    "coverage": "jest --coverage",
+    "migrate": "node ./node_modules/db-migrate/bin/db-migrate up all"
   },
   "repository": {
     "type": "git",
@@ -15,5 +25,30 @@
   "bugs": {
     "url": "https://github.com/HodutAlexandru/haufe-app/issues"
   },
-  "homepage": "https://github.com/HodutAlexandru/haufe-app#readme"
+  "homepage": "https://github.com/HodutAlexandru/haufe-app#readme",
+  "dependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-polyfill": "^6.23.0",
+    "body-parser": "^1.17.1",
+    "cors": "^2.8.1",
+    "db-migrate": "^0.10.0-beta.20",
+    "db-migrate-pg": "^0.1.11",
+    "express": "^4.15.2",
+    "express-simple-errors": "^1.0.0",
+    "isvalid": "^1.6.6",
+    "pg": "^6.1.3"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.8.4",
+    "@babel/node": "^7.8.4",
+    "@babel/preset-env": "^7.8.4",
+    "@babel/register": "^7.8.3",
+    "babel-jest": "^19.0.0",
+    "eslint": "^3.17.1",
+    "eslint-watch": "^3.0.1",
+    "jest": "^19.0.2",
+    "nodemon": "^1.11.0",
+    "supertest": "^3.0.0"
+  }
 }

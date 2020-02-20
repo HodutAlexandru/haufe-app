@@ -27,6 +27,7 @@
   },
   "homepage": "https://github.com/HodutAlexandru/haufe-app#readme",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.18.3",
     "cors": "^2.8.1",
     "db-migrate": "^0.10.0-beta.20",

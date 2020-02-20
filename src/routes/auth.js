@@ -1,5 +1,6 @@
 const express = require("express");
 const uniqid = require("uniqid");
+const bcrypt = require("bcrypt-nodejs");
 const jwt = require("jsonwebtoken");
 
 const pool = require("../util/db");
@@ -7,38 +8,68 @@ const pool = require("../util/db");
 const router = express.Router();
 
 router.post("/register", (req, res, next) => {
-    const user = {
-        id: uniqid(),
-        email: req.body.email,
-        username: req.body.username,
-        password: req.body.password
-    };
-    pool.query(`INSERT INTO haufe.users(id, email, username, password) values ($1, $2, $3, $4)`, [user.id, user.email, user.username, user.password])
-        .then(result => {
-            res.status(201).json({
-                message: 'User created successfully!',
-                user: result.rows
+    bcrypt.hash(req.body.password, null, null, (err, pwd) => {
+        const user = {
+            id: uniqid(),
+            email: req.body.email,
+            username: req.body.username,
+            password: pwd
+        };
+        pool.query(`SELECT * from haufe.users WHERE email = $1`, [user.email]).then(result => {
+            if (result.rows.length === 0) {
+                pool.query(`SELECT * FROM haufe.users WHERE username = $1`, [user.username])
+                    .then(result => {
+                        if (result.rows.length === 0) {
+                            pool.query(`INSERT INTO haufe.users(id, email, username, password) values ($1, $2, $3, $4)`, [user.id, user.email, user.username, user.password])
+                                .then(result => {
+                                    res.status(201).json({
+                                        message: 'User created successfully!'
+                                    });
+                                })
+                                .catch(error => {
+                                    res.status(500).json({
+                                        message: 'Could not create user!',
+                                        error: error
+                                    });
+                                });
+                        } else {
+                            return res.status(400).json({
+                                message: `User with username ${user.username} already exists! Please provide another username!`
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        return res.status(500).json({
+                            message: `Unexpected error occured!`
+                        });
+                    });
+            } else {
+                return res.status(400).json({
+                    message: `User with email ${user.email} already exists!`
+                });
+            }
+        })
+            .catch(err => {
+                return res.status(500).json({
+                    message: `Unexpected error occured!`
+                });
             });
-        })
-        .catch(error => {
-            res.status(500).json({
-                message: 'Could not create user!',
-                error: error
-            })
-        })
-});
+    });
+
+})
+;
 
 router.post("/login", (req, res, next) => {
     let fetchedUser;
-    pool.query(`SELECT * from haufe.users WHERE username IS $1`, [req.username])
+    pool.query(`SELECT * from haufe.users WHERE username = $1`, [req.body.username])
         .then(user => {
             if (!user) {
                 return res.status(401).json({
-                    message: `No user with username ${user.username} exist!`
+                    message: `No user with username ${req.body.username} exists!`
                 });
             }
-            fetchedUser = user;
-            return req.body.password === user.password;
+            fetchedUser = user.rows[0];
+            return bcrypt.compareSync(req.body.password, user.rows[0].password);
         })
         .then(result => {
             if (!result) {

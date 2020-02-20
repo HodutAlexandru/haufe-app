@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 
 const healthcheckRoute = require('./routes/healthcheck');
 const infoRoute = require('./routes/info');
+const authRoutes = require('./routes/auth');
 
 const app = express();
 
@@ -23,5 +24,6 @@ app.use((req, res, next) => {
 
 app.use("/api/healthcheck", healthcheckRoute);
 app.use("/api/info", infoRoute);
+app.use("/api", authRoutes);
 
 module.exports = app;

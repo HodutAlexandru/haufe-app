@@ -1,6 +1,6 @@
-version: '2'
+version: '3.7'
 services:
-  web:
+  api:
     build: .
     command: npm run dev
     volumes:
@@ -11,15 +11,40 @@ services:
     depends_on:
       - postgres
     environment:
-      DATABASE_URL: postgres://developer@postgres/haufe
+      POSTGRES_USER: developer
+      POSTGRES_HOST: localhost
+      POSTGRES_DB: developer
+      POSTGRES_PORT: 5432
+    network_mode:
+      host
   postgres:
     image: postgres:9.6.2-alpine
     environment:
       POSTGRES_USER: developer
-      POSTGRES_DB: haufe
+      POSTGRES_PORT: 5432
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+    network_mode:
+      host
+  pgAdmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=pgadmin@domain.com
+      - PGADMIN_DEFAULT_PASSWORD=password
+      - PGADMIN_LISTEN_PORT=5050
+    volumes:
+      - pga4volume:/var/lib/pgadmin
+    network_mode:
+      host
+    depends_on:
+      - postgres
   client:
     image: nginx
     ports:
       - 8000:80
     volumes:
       - ./src:/usr/share/nginx/html
+
+volumes:
+  pga4volume:
+    name: pga4volume_data

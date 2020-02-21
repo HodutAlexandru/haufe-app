@@ -1,3 +1,7 @@
+import {getLoginResponse, getResponse, getResponseWithMessage} from "../helpers/responseTypes";
+import {statusTypes} from "../helpers/responseTypes";
+import {User} from "../model/user";
+
 const express = require("express");
 const uniqid = require("uniqid");
 const bcrypt = require("bcrypt-nodejs");
@@ -9,12 +13,7 @@ const router = express.Router();
 
 router.post("/register", (req, res, next) => {
     bcrypt.hash(req.body.password, null, null, (err, pwd) => {
-        const user = {
-            id: uniqid(),
-            email: req.body.email,
-            username: req.body.username,
-            password: pwd
-        };
+        const user = new User(uniqid(), req.body.email, req.body.username, pwd);
         pool.query(`SELECT * from haufe.users WHERE email = $1`, [user.email]).then(result => {
             if (result.rows.length === 0) {
                 pool.query(`SELECT * FROM haufe.users WHERE username = $1`, [user.username])
@@ -22,37 +21,24 @@ router.post("/register", (req, res, next) => {
                         if (result.rows.length === 0) {
                             pool.query(`INSERT INTO haufe.users(id, email, username, password) values ($1, $2, $3, $4)`, [user.id, user.email, user.username, user.password])
                                 .then(result => {
-                                    res.status(201).json({
-                                        message: 'User created successfully!'
-                                    });
+                                    getResponse(statusTypes.created, res);
                                 })
                                 .catch(error => {
-                                    res.status(500).json({
-                                        message: 'Could not create user!',
-                                        error: error
-                                    });
+                                    getResponse(statusTypes.internalServerError, res);
                                 });
                         } else {
-                            return res.status(400).json({
-                                message: `User with username ${user.username} already exists! Please provide another username!`
-                            });
+                            return getResponseWithMessage(statusTypes.badRequest, res, `User with username ${user.username} already exists!`)
                         }
                     })
                     .catch(err => {
-                        return res.status(500).json({
-                            message: `Unexpected error occured!`
-                        });
+                        return getResponse(statusTypes.internalServerError, res);
                     });
             } else {
-                return res.status(400).json({
-                    message: `User with email ${user.email} already exists!`
-                });
+                return getResponseWithMessage(statusTypes.badRequest, res, `User with email ${user.email} already exists!`)
             }
         })
             .catch(err => {
-                return res.status(500).json({
-                    message: `Unexpected error occured!`
-                });
+                return getResponse(statusTypes.internalServerError, res);
             });
     });
 
@@ -64,18 +50,14 @@ router.post("/login", (req, res, next) => {
     pool.query(`SELECT * from haufe.users WHERE username = $1`, [req.body.username])
         .then(user => {
             if (!user) {
-                return res.status(401).json({
-                    message: `No user with username ${req.body.username} exists!`
-                });
+                return getResponse(statusTypes.unauthorized, res);
             }
             fetchedUser = user.rows[0];
             return bcrypt.compareSync(req.body.password, user.rows[0].password);
         })
         .then(result => {
             if (!result) {
-                return res.status(401).json({
-                    message: "Wrong password! Please try again!"
-                });
+                return getResponse(statusTypes.unauthorized, res);
             }
             const userId = fetchedUser.id;
             const token = jwt.sign({
@@ -86,19 +68,10 @@ router.post("/login", (req, res, next) => {
                 {
                     expiresIn: "1h"
                 });
-
-            res.status(200).json({
-                userId: userId,
-                message: "Successfully logged in!",
-                token: token,
-                expiresIn: 3600
-            });
+            getLoginResponse(statusTypes.ok, res, userId, token, "Successfully logged in!", 3600);
         })
         .catch(error => {
-            return res.status(401).json({
-                message: "Wrong username! Please try again",
-                err: error
-            })
+            return getResponse(statusTypes.unauthorized, res);
         })
 });
 

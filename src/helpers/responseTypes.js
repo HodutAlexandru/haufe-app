@@ -7,6 +7,10 @@ export const statusTypes = {
         statusCode: 201,
         message: 'Resource created successfully!'
     },
+    noContent: {
+        statusCode: 204,
+        message: 'No content'
+    },
     badRequest: {
         statusCode: 400,
         message: 'Bad request!'
@@ -42,5 +46,13 @@ export function getLoginResponse(action, res, userId, token, message, expiration
         message: message,
         token: token,
         expiresIn: expirationTime
+    });
+}
+
+export function getResponseWithValue(action, res, value) {
+    return res.status(action.statusCode).json({
+        statusCode: action.statusCode,
+        message: action.message,
+        value: value
     });
 }

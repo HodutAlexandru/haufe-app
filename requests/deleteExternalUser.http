@@ -1,0 +1,8 @@
+DELETE http://localhost:3000/api/users/external/delete?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMnM2cGYyZWs2d2w0MTRmIiwidXNlcm5hbWUiOiJ1c2VybmFtZSIsInJvbGUiOiJpbnRlcm5hbCIsImlhdCI6MTU4MjMxNDM1NywiZXhwIjoxNTgyMzE3OTU3fQ.IOGVwcrstvE4bpJ0wfkfdtsnJaLfnQLV_UdlKxGgNbU
+Content-Type: application/json
+
+{
+  "username": "username"
+}
+
+###

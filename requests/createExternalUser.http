@@ -1,0 +1,10 @@
+POST http://localhost:3000/api/users/external/create?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxZ3VuMmRrazZ3a2hhYTYiLCJ1c2VybmFtZSI6InVzZXJuYW1lMjMwMSIsInJvbGUiOiJpbnRlcm5hbCIsImlhdCI6MTU4MjMxMzI5OCwiZXhwIjoxNTgyMzE2ODk4fQ.k6pEmRAiRYh42YZw3-sMfF8FAxoPk74gsqpCgqFa7M0
+Content-Type: application/json
+
+{
+  "email": "testExternal@gmail.com",
+  "username": "externalUser",
+  "password": "password"
+}
+
+###

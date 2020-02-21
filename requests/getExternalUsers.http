@@ -1,0 +1,4 @@
+GET http://localhost:3000/api/users/external?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxZ3VuNGNrNndobWtoNyIsInVzZXJuYW1lIjoidXNlcm5hbWUyIiwicm9sZSI6ImludGVybmFsIiwiaWF0IjoxNTgyMzA5OTMyLCJleHAiOjE1ODIzMTM1MzJ9.POus_dVf2BRQ_9Q0FL3-htHjwrC2C_xYabnKxskscHU
+Accept: application/json
+
+###

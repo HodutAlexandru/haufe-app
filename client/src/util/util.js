@@ -1,3 +1,6 @@
-const apiBaseUrl = 'http://localhost:3000/api';
+import {createBrowserHistory} from 'history';
 
-export default apiBaseUrl;
+const apiBaseUrl = 'http://localhost:3000/api';
+const history = createBrowserHistory();
+
+export {apiBaseUrl, history};

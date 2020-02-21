@@ -12,7 +12,9 @@ router.get("", (req, res, next) => {
         res.status(200).json(healthcheck)
     } catch (e) {
         healthcheck.message = e;
-        res.status(503).json(healthcheck);
+        res.status(503).json({
+            message: "Application not healthy!"
+        });
     }
 });
 

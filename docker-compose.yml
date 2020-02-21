@@ -17,6 +17,10 @@ services:
       POSTGRES_PORT: 5432
     network_mode:
       host
+  client:
+    build: ./client
+    volumes:
+      - ./client:/app
   postgres:
     image: postgres:9.6.2-alpine
     environment:
@@ -38,12 +42,14 @@ services:
       host
     depends_on:
       - postgres
-  client:
+  nginx:
     image: nginx
     ports:
       - 8000:80
+    depends_on:
+      - client
     volumes:
-      - ./src:/usr/share/nginx/html
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
 
 volumes:
   pga4volume:

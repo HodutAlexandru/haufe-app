@@ -30,18 +30,6 @@ services:
       - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
     network_mode:
       host
-  pgAdmin:
-    image: dpage/pgadmin4:latest
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=pgadmin@domain.com
-      - PGADMIN_DEFAULT_PASSWORD=password
-      - PGADMIN_LISTEN_PORT=5050
-    volumes:
-      - pga4volume:/var/lib/pgadmin
-    network_mode:
-      host
-    depends_on:
-      - postgres
   nginx:
     image: nginx
     ports:

@@ -1,0 +1,22 @@
+.header {
+
+}
+
+.title {
+    display: flex;
+    justify-content: center;
+}
+
+.title-text {
+    margin-top: 0;
+}
+
+.buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.button {
+    margin-right: 1em;
+    margin-top: 1em;
+}

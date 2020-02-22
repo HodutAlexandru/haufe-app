@@ -1,12 +1,16 @@
 import React from "react";
 
 import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
+import TextField from "@material-ui/core/TextField";
 
 import {userService} from "../../services/user.service";
 import {store} from "../../util/store";
 import {userActions} from "../../actions/user/user.actions";
 import {history} from "../../util/util";
 import {alertActions} from "../../actions/alert/alert.actions";
+
+import "./Login.css";
 
 class Login extends React.Component {
     constructor(props) {
@@ -16,17 +20,21 @@ class Login extends React.Component {
             user: {
                 username: '',
                 password: '',
-                submitted: false
-            }
+            },
+            submitted: false
         }
 
-        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleChange(e) {
-        const { name, value } = e.target;
-        this.setState({ [name]: value });
+    handleChange(value, param) {
+        const { user } = this.state;
+        this.setState({
+            user: {
+                ...user,
+                [param]: value
+            }
+        });
     }
 
     handleRegisterNavigation() {
@@ -37,9 +45,9 @@ class Login extends React.Component {
         e.preventDefault();
 
         this.setState({ submitted: true });
-        const { username, password } = this.state;
-        if (username && password) {
-            userService.login(username, password)
+        const { user } = this.state;
+        if (user.username && user.password) {
+            userService.login(user.username, user.password)
                 .then(user => {
                     store.dispatch(userActions.loginSuccess(user));
                     history.push('/');
@@ -51,30 +59,52 @@ class Login extends React.Component {
     }
 
     render() {
-        const user = this.state;
+        const { user, submitted } = this.state;
         return (
-            <div>
-                <form name="login" onSubmit={this.handleSubmit}>
-                    <div>
-                        <label htmlFor="username">Username:</label>
-                        <input type="text" name="username" value={user.username} onChange={this.handleChange} />
-                        {user.submitted && !user.username &&
-                            <div className="help-block">Username is required</div>
-                        }
-                    </div>
-                    <div>
-                        <label htmlFor="password">Password:</label>
-                        <input type="password" name="password" value={user.password} onChange={this.handleChange} />
-                        {user.submitted && !user.password &&
-                            <div className="help-block">Password is required</div>
-                        }
-                    </div>
-                    <div>
-                        <Button type="submit" variant="contained" color="primary">Login</Button>
-                        <Button type="submit" variant="contained" color="primary" onClick={this.handleRegisterNavigation}>Register</Button>
-                    </div>
-                </form>
-            </div>
+            <Grid container spacing={3}>
+                <Grid item xs={12}>
+                    <form name="login" onSubmit={this.handleSubmit} noValidate autoComplete="off">
+                        <br />
+                        <section>
+                            <TextField
+                                id="username"
+                                type={"text"}
+                                error={submitted && !user.username}
+                                label="Username"
+                                required={true}
+                                value={user.username}
+                                onChange={(e) => this.handleChange(e.target.value, 'username')}
+                                helperText={submitted && !user.username ? "Username is required!" : ""}
+                                placeholder={"Username"}
+                                variant="outlined"
+                            />
+                        </section>
+                        <br />
+                        <section>
+                            <TextField
+                                id="password"
+                                type={"password"}
+                                error={submitted && !user.password}
+                                label="Password"
+                                required={true}
+                                value={user.password}
+                                onChange={(e) => this.handleChange(e.target.value, 'password')}
+                                helperText={submitted && !user.password ? "Password is required!" : ""}
+                                placeholder={"Password"}
+                                variant="outlined"
+                            />
+                        </section>
+                        <br />
+                        <section>
+                            <Button type="submit" variant="contained" color="primary" className="button" onClick={this.handleSubmit}>Login</Button>
+                        </section>
+                        <br />
+                        <section>
+                            <Button type="submit" variant="contained" color="primary" className="button" onClick={this.handleRegisterNavigation}>Register</Button>
+                        </section>
+                    </form>
+                </Grid>
+            </Grid>
         );
     }
 }

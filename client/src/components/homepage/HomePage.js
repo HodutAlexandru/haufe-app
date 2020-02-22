@@ -3,9 +3,20 @@ import jwt_decode from "jwt-decode";
 import {store} from "../../util/store";
 import {userService} from "../../services/user.service";
 import {internalUserActions} from "../../actions/internalUser/internal.user.actions";
-import {Button, Paper, Table, TableBody, TableContainer, TableHead, TableCell, TableRow, withStyles} from "@material-ui/core";
+import {
+    Button,
+    Paper,
+    Table,
+    TableBody,
+    TableContainer,
+    TableHead,
+    TableCell,
+    TableRow,
+    withStyles,
+    Box
+} from "@material-ui/core";
 import {userActions} from "../../actions/user/user.actions";
-import {history} from "../../util/util";
+import "./HomePage.css";
 
 class HomePage extends React.Component {
 
@@ -52,7 +63,19 @@ class HomePage extends React.Component {
             const externalUsers = [];
             return(
                 <div>
-                    <h3>Welcome to our app {user.username}</h3>
+                    <Box bgcolor="info.main">
+                        <section id="header" className="header">
+                            <section id="buttons" className="buttons">
+                                <section id="logout" className="button">
+                                    <Button variant="contained" color="secondary" onClick={this.handleLogout}>Logout</Button>
+                                </section>
+                            </section>
+                            <section id="title" className="title">
+                                <h2 className="title-text">HAUFE-APP</h2>
+                            </section>
+                        </section>
+                    </Box>
+                    <h3>Welcome to our app {userData.username}</h3>
                     <TableContainer component={Paper}>
                         <Table aria-label="customized label">
                             <TableHead>
@@ -70,14 +93,24 @@ class HomePage extends React.Component {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <Button variant="contained" color="primary" onClick={this.handleLogout}>Logout</Button>
                 </div>
             );
         } else {
-            return <div>
-                <h3>This is the home page component! Welcome {user.username}</h3>
-                <Button variant="contained" color="primary" onClick={this.handleLogout}>Logout</Button>
-            </div>
+            return (<div>
+                        <Box bgcolor="info.main">
+                            <section id="header" className="header">
+                                <section id="buttons" className="buttons">
+                                    <section id="logout" className="button">
+                                        <Button variant="contained" color="secondary" onClick={this.handleLogout}>Logout</Button>
+                                    </section>
+                                </section>
+                                <section id="title" className="title">
+                                    <h2 className="title-text">HAUFE-APP</h2>
+                                </section>
+                            </section>
+                        </Box>
+                        <h3>This is the home page component! Welcome {user.username}</h3>
+                    </div>);
         }
     }
 }

@@ -1,7 +1,14 @@
 import React from "react";
-import { Link } from 'react-router-dom';
-import { connect } from 'react-redux';
+
+import TextField from "@material-ui/core/TextField";
+import MenuItem from '@material-ui/core/MenuItem';
+import Button from "@material-ui/core/Button";
+
 import {userActions} from "../../actions/user/user.actions";
+import {store} from "../../util/store";
+import {history} from "../../util/util";
+import {userService} from "../../services/user.service";
+import {alertActions} from "../../actions/alert/alert.actions";
 
 class Register extends React.Component {
     constructor(props) {
@@ -10,7 +17,8 @@ class Register extends React.Component {
             user: {
                 email: '',
                 username: '',
-                password: ''
+                password: '',
+                role: 'external'
             },
             submitted: false
         };
@@ -30,18 +38,36 @@ class Register extends React.Component {
         });
     }
 
+    handleLoginNavigation() {
+        history.push('/login');
+    }
+
     handleSubmit(event) {
         event.preventDefault();
 
         this.setState({ submitted: true });
         const { user } = this.state;
         if (user.email && user.username && user.password) {
-            this.props.register(user);
+            userService.register(user).then(() => {
+                store.dispatch(userActions.registerSuccess(user));
+                history.push('/login');
+                store.dispatch(alertActions.success('Registration successful'));
+            }).catch(err => {
+                store.dispatch(userActions.registerFailure(err.toString()));
+                store.dispatch(alertActions.error(err.toString()));
+            });
         }
     }
 
     render() {
         const state = this.state;
+        const roleOptions = [{
+            label: 'External',
+            value: 'external'
+        }, {
+            label: 'Internal',
+            value: 'internal'
+        }];
         return (
             <form onSubmit={this.handleSubmit}>
                 <div>
@@ -66,21 +92,21 @@ class Register extends React.Component {
                     }
                 </div>
                 <div>
-                    <button type="submit">Register</button>
-                    <Link to="/login">Login</Link>
+                    <TextField select label="Choose" value={state.user.role} onChange={this.handleChange} helperText="Please choose user type">
+                        {roleOptions.map(role => (
+                            <MenuItem key={role.value} value={role.value}>
+                                {role.label}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </div>
+                <div>
+                    <Button type="submit" variant="contained" color="primary">Register</Button>
+                    <Button variant="contained" color="primary" onClick={this.handleLoginNavigation}>Login</Button>
                 </div>
             </form>
         );
     }
 }
 
-function mapState(state) {
-    return state.registration;
-}
-
-const actionCreators = {
-    register: userActions.register
-}
-
-const register = connect(mapState, actionCreators)(Register);
-export { register as Register };
+export default Register;

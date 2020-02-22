@@ -21,14 +21,14 @@ function createUser(req, res, user) {
                                 getResponse(statusTypes.created, res);
                             })
                             .catch(error => {
-                                getResponse(statusTypes.internalServerError, res);
+                                getResponseWithMessage(statusTypes.internalServerError, res, error);
                             });
                     } else {
                         return getResponseWithMessage(statusTypes.badRequest, res, `User with username ${user.username} already exists!`)
                     }
                 })
                 .catch(err => {
-                    return getResponse(statusTypes.internalServerError, res);
+                    return getResponseWithMessage(statusTypes.internalServerError, res, err);
                 });
         } else {
             return getResponseWithMessage(statusTypes.badRequest, res, `User with email ${user.email} already exists!`)

@@ -1,8 +1,12 @@
 import React from "react";
-import {Link} from "react-router-dom";
-import {connect} from "react-redux";
 
-import {userActions} from '../../actions/user/user.actions';
+import Button from "@material-ui/core/Button";
+
+import {userService} from "../../services/user.service";
+import {store} from "../../util/store";
+import {userActions} from "../../actions/user/user.actions";
+import {history} from "../../util/util";
+import {alertActions} from "../../actions/alert/alert.actions";
 
 class Login extends React.Component {
     constructor(props) {
@@ -25,13 +29,24 @@ class Login extends React.Component {
         this.setState({ [name]: value });
     }
 
+    handleRegisterNavigation() {
+        history.push('/register');
+    }
+
     handleSubmit(e) {
         e.preventDefault();
 
         this.setState({ submitted: true });
         const { username, password } = this.state;
         if (username && password) {
-            this.props.login(username, password);
+            userService.login(username, password)
+                .then(user => {
+                    store.dispatch(userActions.loginSuccess(user));
+                    history.push('/');
+                }).catch(err => {
+                    store.dispatch(userActions.loginFailure());
+                    store.dispatch(alertActions.error(err.toString()));
+                });
         }
     }
 
@@ -55,8 +70,8 @@ class Login extends React.Component {
                         }
                     </div>
                     <div>
-                        <button type="submit">Login</button>
-                        <Link to="/register">Register</Link>
+                        <Button type="submit" variant="contained" color="primary">Login</Button>
+                        <Button type="submit" variant="contained" color="primary" onClick={this.handleRegisterNavigation}>Register</Button>
                     </div>
                 </form>
             </div>
@@ -64,16 +79,4 @@ class Login extends React.Component {
     }
 }
 
-
-
-function mapState(state) {
-    const { loggingIn } = state;
-    return { loggingIn };
-}
-
-const actionCreators = {
-    login: userActions.login
-};
-
-const login = connect(mapState, actionCreators)(Login);
-export { login as Login };;
+export default Login;

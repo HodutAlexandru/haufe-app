@@ -1,23 +1,19 @@
-let user = JSON.parse(localStorage.getItem('user'));
-const initialState = user ? {loggedIn: true, user} : {};
+import { handleActions } from "redux-actions";
 
-export function auth(state = initialState, action) {
-    switch (action.type) {
-        case 'USER_LOGIN_REQUEST':
-            return {
-                loggingIn: true,
-                user: action.user
-            };
-        case 'USER_LOGIN_SUCCESS':
-            return {
-                loggedIn: true,
-                user: action.user
-            };
-        case 'USER_LOGIN_FAILURE':
-            return {};
-        case 'USER_LOGOUT':
-            return {};
-        default:
-            return state;
-    }
-}
+const user = JSON.parse(localStorage.getItem('user'));
+const initialState = user ? [{loggedIn: true, user}] : [];
+
+export default handleActions({
+    LOGIN_SUCCESS: (state, action) => ([
+        ...state,
+        action.payload
+    ]),
+    LOGIN_FAILURE: (state, action) => ([
+        ...state,
+        action.payload
+    ]),
+    LOGOUT: (state, action) => ([
+        ...state,
+        action.payload
+    ])
+}, initialState);

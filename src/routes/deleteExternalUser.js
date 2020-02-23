@@ -1,8 +1,8 @@
 import {validateToken} from "../util/validation";
-import {getResponse, getResponseWithValue, statusTypes} from "../helpers/responseTypes";
+import {getResponse, statusTypes} from "../helpers/responseTypes";
 
 const express = require("express");
-const {pool} = require("../util/db");
+const { pool } = require("../util/db");
 
 const router = express.Router();
 

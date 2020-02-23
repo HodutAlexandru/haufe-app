@@ -54,12 +54,17 @@ class CreateUser extends React.Component {
                 userService.createExternalUser(user).then(() => {
                     store.dispatch(internalUserActions.createExternalUserSuccess(user));
                     store.dispatch(alertActions.success('Creation successful'));
+                    this.props.loadExternalUsers();
                 }).catch(err => {
                     store.dispatch(internalUserActions.createExternalUserFailure(err));
                     store.dispatch(alertActions.error(err.toString()));
-                })
+                });
             }
         }
+    }
+
+    handleLoginNavigation() {
+        history.push('/login');
     }
 
     render() {

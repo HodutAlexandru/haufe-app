@@ -16,46 +16,61 @@ import {
     Box
 } from "@material-ui/core";
 import {userActions} from "../../actions/user/user.actions";
-import { FaPlus, FaMinus } from "react-icons/fa"
+import { FaPlus, FaMinus, FaSync } from "react-icons/fa"
 
 import "./HomePage.css";
-import CreateUser from "../shared/createUser/createUser";
+import CreateUser from "../shared/createUser/CreateUser";
+import {alertActions} from "../../actions/alert/alert.actions";
 
 class HomePage extends React.Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            showCreateUser: false
+            showCreateUser: false,
+            externalUsers: undefined
         }
-
-        this.showCreateUser = this.showCreateUser.bind(this);
-        this.hideCreateUser = this.hideCreateUser.bind(this);
     }
 
-    showCreateUser() {
+    showCreateUser = () => {
         this.setState({
             showCreateUser: true
         });
     }
 
-    hideCreateUser() {
+    hideCreateUser = () => {
         this.setState({
             showCreateUser: false
         });
     }
 
-    loadExternalUsers() {
+    loadExternalUsers = () => {
         userService.getExternalUsers()
             .then(users => {
                 store.dispatch(internalUserActions.getExternalUsersSuccess(users));
+                store.dispatch(alertActions.success('Get external users'));
+
+                this.setState({
+                    externalUsers: users.value
+                })
             })
             .catch(error => {
                 store.dispatch(internalUserActions.getExternalUsersFailure(error));
+                store.dispatch(alertActions.error(error));
             });
     }
 
-    handleLogout() {
+    handleDeleteExternal = (user) => {
+        userService.deleteExternalUser(user).then(result => {
+            store.dispatch(internalUserActions.deleteExternalUserSuccess(result));
+            store.dispatch(alertActions.success('Delete user complete'));
+        }).catch(error => {
+            store.dispatch(internalUserActions.deleteExternalUserFailure(error));
+            store.dispatch(alertActions.error(error));
+        })
+    }
+
+    handleLogout = () => {
         userService.logout();
         store.dispatch(userActions.logout());
     }
@@ -75,7 +90,7 @@ class HomePage extends React.Component {
         const StyledTableRow = withStyles(theme => ({
             root: {
                 '&:nth-of-type(odd)': {
-                    backgroundColor: theme.palette.background.default,
+                    backgroundColor: theme.palette.common.white,
                 },
             },
         }))(TableRow);
@@ -83,10 +98,10 @@ class HomePage extends React.Component {
         const user = JSON.parse(localStorage.getItem('user'));
         const userData = jwt_decode(user.token);
         if(userData.role === 'internal') {
-            this.loadExternalUsers();
-            const internalUserStateLength = store.getState().internalUser.length;
-            // const externalUsers = store.getState().internalUser[internalUserStateLength - 1].value;
-            const externalUsers = [];
+            const { externalUsers } = this.state;
+            if(externalUsers === undefined) {
+                this.loadExternalUsers();
+            }
             return(
                 <div>
                     <Box bgcolor="info.main">
@@ -102,30 +117,51 @@ class HomePage extends React.Component {
                         </section>
                     </Box>
                     <h3>Welcome to our app {userData.username}</h3>
-                    <TableContainer component={Paper}>
-                        <Table aria-label="customized label">
-                            <TableHead>
-
-                            </TableHead>
-                            <TableBody>
-                                {externalUsers.map(user => (
-                                    <StyledTableRow key={user.email}>
-                                        <StyledTableCell component="th" scope="row">
-                                            {user.email}
-                                        </StyledTableCell>
-                                        <StyledTableCell align="right">{user.username}</StyledTableCell>
-                                    </StyledTableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                    <div>
+                        <FaSync className="refresh-button" onClick={this.loadExternalUsers}/>
+                        {
+                            externalUsers !== undefined ?
+                                <div>
+                                    <TableContainer component={Paper}>
+                                        <Table aria-label="customized label">
+                                            <TableHead>
+                                                <TableRow>
+                                                    <StyledTableCell>Email</StyledTableCell>
+                                                    <StyledTableCell align="right">Username</StyledTableCell>
+                                                    <StyledTableCell align="right">Instagram</StyledTableCell>
+                                                    <StyledTableCell align="right">Delete option</StyledTableCell>
+                                                </TableRow>
+                                            </TableHead>
+                                            <TableBody>
+                                                {externalUsers.map(user => (
+                                                    <StyledTableRow key={user.email}>
+                                                        <StyledTableCell component="th" scope="row">
+                                                            {user.email}
+                                                        </StyledTableCell>
+                                                        <StyledTableCell align="right">{user.username}</StyledTableCell>
+                                                        <StyledTableCell align="right"> - </StyledTableCell>
+                                                        <StyledTableCell align="right">
+                                                            <Button color="secondary" onClick={this.handleDeleteExternal(user)}>Delete</Button>
+                                                        </StyledTableCell>
+                                                    </StyledTableRow>
+                                                ))}
+                                            </TableBody>
+                                        </Table>
+                                    </TableContainer>
+                                </div>
+                            :
+                                <div>
+                                    <h3>No external users at the moment!</h3>
+                                </div>
+                        }
+                    </div>
                     {
                         showCreateUser ?
                             <div className="create-user">
                                 <FaMinus className="toggle-button" onClick={this.hideCreateUser} />
-                                <CreateUser isRegisterComponent={false} />
+                                <CreateUser isRegisterComponent={false} loadExternalUsers={this.loadExternalUsers} />
                             </div>
-                        :
+                            :
                             <div className="create-user">
                                 <FaPlus className="toggle-button" onClick={this.showCreateUser} />
                             </div>
@@ -146,7 +182,7 @@ class HomePage extends React.Component {
                                 </section>
                             </section>
                         </Box>
-                        <h3>This is the home page component! Welcome {user.username}</h3>
+                        <h3>This is the home page component! Welcome {userData.username}</h3>
                     </div>);
         }
     }

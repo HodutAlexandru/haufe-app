@@ -5,13 +5,9 @@ import Grid from "@material-ui/core/Grid";
 import {history} from "../../util/util";
 
 import "./Register.css"
-import CreateUser from "../shared/createUser/createUser";
+import CreateUser from "../shared/createUser/CreateUser";
 
 class Register extends React.Component {
-    handleLoginNavigation() {
-        history.push('/login');
-    }
-
     render() {
         return (
             <Grid container spacing={3}>

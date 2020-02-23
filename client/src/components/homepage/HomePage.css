@@ -24,10 +24,13 @@
 .create-user {
     display: flex;
     justify-content: center;
-    flex-direction: row;
 }
 
 .toggle-button {
     cursor: pointer;
     position: absolute;
+}
+
+.refresh-button {
+    cursor: pointer;
 }

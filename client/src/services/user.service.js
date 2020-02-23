@@ -98,7 +98,6 @@ function autoAuth() {
     const now = new Date();
     const expiresIn = authInfo.expirationDate.getTime() - now.getTime();
     if(expiresIn > 0) {
-        console.log(authInfo.user);
         localStorage.setItem('user', authInfo.user);
         setAuthTimer(expiresIn / 1000);
     }

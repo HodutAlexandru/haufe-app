@@ -60,16 +60,16 @@ class HomePage extends React.Component {
             });
     }
 
-    handleDeleteExternal = (user) => {
-        userService.deleteExternalUser(user).then(result => {
+    handleDeleteExternal = (userId, user, event) => {
+        userService.deleteExternalUser(userId).then(result => {
             store.dispatch(internalUserActions.deleteExternalUserSuccess(result));
             store.dispatch(alertActions.success('Delete user complete'));
-            // this.loadExternalUsers();
+            this.loadExternalUsers();
         }).catch(error => {
             store.dispatch(internalUserActions.deleteExternalUserFailure(error));
             store.dispatch(alertActions.error(error));
         })
-        console.log('Im here');
+        event.preventDefault();
     }
 
     handleLogout = () => {
@@ -143,9 +143,9 @@ class HomePage extends React.Component {
                                                             {user.email}
                                                         </StyledTableCell>
                                                         <StyledTableCell align="right">{user.username}</StyledTableCell>
-                                                        <StyledTableCell align="right"> <img src={userData.imgSource} className="profile-img"/> </StyledTableCell>
+                                                        <StyledTableCell align="right"><img src={userData.imgSource} alt="" className="profile-img"/></StyledTableCell>
                                                         <StyledTableCell align="right">
-                                                            <Button color="secondary" onClick={this.handleDeleteExternal(user)}>Delete</Button>
+                                                            <Button color="secondary" onClick={this.handleDeleteExternal.bind(user, user.userId, this)}>Delete</Button>
                                                         </StyledTableCell>
                                                     </StyledTableRow>
                                                 ))}

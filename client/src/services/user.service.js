@@ -72,8 +72,7 @@ function createExternalUser(user) {
     return fetch(`${apiBaseUrl}/users/external/create?token=${token}`, request).then(handleResponse);
 }
 
-function deleteExternalUser(user) {
-    const userId = user.userId;
+function deleteExternalUser(userId) {
     const request = {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' }

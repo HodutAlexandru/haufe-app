@@ -2,8 +2,6 @@ import React from "react";
 
 import Grid from "@material-ui/core/Grid";
 
-import {history} from "../../util/util";
-
 import "./Register.css"
 import CreateUser from "../shared/createUser/CreateUser";
 

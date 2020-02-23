@@ -16,9 +16,34 @@ import {
     Box
 } from "@material-ui/core";
 import {userActions} from "../../actions/user/user.actions";
+import { FaPlus, FaMinus } from "react-icons/fa"
+
 import "./HomePage.css";
+import CreateUser from "../shared/createUser/createUser";
 
 class HomePage extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            showCreateUser: false
+        }
+
+        this.showCreateUser = this.showCreateUser.bind(this);
+        this.hideCreateUser = this.hideCreateUser.bind(this);
+    }
+
+    showCreateUser() {
+        this.setState({
+            showCreateUser: true
+        });
+    }
+
+    hideCreateUser() {
+        this.setState({
+            showCreateUser: false
+        });
+    }
 
     loadExternalUsers() {
         userService.getExternalUsers()
@@ -36,6 +61,7 @@ class HomePage extends React.Component {
     }
 
     render() {
+        const {showCreateUser} = this.state;
         const StyledTableCell = withStyles(theme => ({
             head: {
                 backgroundColor: theme.palette.common.black,
@@ -93,6 +119,17 @@ class HomePage extends React.Component {
                             </TableBody>
                         </Table>
                     </TableContainer>
+                    {
+                        showCreateUser ?
+                            <div className="create-user">
+                                <FaMinus className="toggle-button" onClick={this.hideCreateUser} />
+                                <CreateUser isRegisterComponent={false} />
+                            </div>
+                        :
+                            <div className="create-user">
+                                <FaPlus className="toggle-button" onClick={this.showCreateUser} />
+                            </div>
+                    }
                 </div>
             );
         } else {

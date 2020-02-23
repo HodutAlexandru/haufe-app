@@ -10,6 +10,7 @@ router.get('/users/external', validateToken, (req, res, next) => {
    pool.query(`SELECT * from haufe.users WHERE role = 'external'`).then(result => {
       getResponseWithValue(statusTypes.ok, res, result.rows.map(user => {
          return {
+            userId: user.id,
             email: user.email,
             username: user.username
          }

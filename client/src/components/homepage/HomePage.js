@@ -36,7 +36,7 @@ class HomePage extends React.Component {
         this.setState({
             showCreateUser: true
         });
-    }
+    };
 
     hideCreateUser = () => {
         this.setState({
@@ -52,7 +52,7 @@ class HomePage extends React.Component {
 
                 this.setState({
                     externalUsers: users.value
-                })
+                });
             })
             .catch(error => {
                 store.dispatch(internalUserActions.getExternalUsersFailure(error));
@@ -64,10 +64,12 @@ class HomePage extends React.Component {
         userService.deleteExternalUser(user).then(result => {
             store.dispatch(internalUserActions.deleteExternalUserSuccess(result));
             store.dispatch(alertActions.success('Delete user complete'));
+            // this.loadExternalUsers();
         }).catch(error => {
             store.dispatch(internalUserActions.deleteExternalUserFailure(error));
             store.dispatch(alertActions.error(error));
         })
+        console.log('Im here');
     }
 
     handleLogout = () => {
@@ -118,9 +120,11 @@ class HomePage extends React.Component {
                     </Box>
                     <h3>Welcome to our app {userData.username}</h3>
                     <div>
-                        <FaSync className="refresh-button" onClick={this.loadExternalUsers}/>
+                        <Button>
+                            <FaSync className="refresh-button" onClick={this.loadExternalUsers}/>
+                        </Button>
                         {
-                            externalUsers !== undefined ?
+                            (externalUsers !== undefined) ?
                                 <div>
                                     <TableContainer component={Paper}>
                                         <Table aria-label="customized label">
@@ -139,7 +143,7 @@ class HomePage extends React.Component {
                                                             {user.email}
                                                         </StyledTableCell>
                                                         <StyledTableCell align="right">{user.username}</StyledTableCell>
-                                                        <StyledTableCell align="right"> - </StyledTableCell>
+                                                        <StyledTableCell align="right"> <img src={userData.imgSource} className="profile-img"/> </StyledTableCell>
                                                         <StyledTableCell align="right">
                                                             <Button color="secondary" onClick={this.handleDeleteExternal(user)}>Delete</Button>
                                                         </StyledTableCell>
@@ -155,6 +159,7 @@ class HomePage extends React.Component {
                                 </div>
                         }
                     </div>
+                    <br />
                     {
                         showCreateUser ?
                             <div className="create-user">

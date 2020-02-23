@@ -36,6 +36,7 @@
     "express-simple-errors": "^1.0.0",
     "isvalid": "^1.6.6",
     "jsonwebtoken": "^8.5.1",
+    "ml-image-searcher": "^1.0.4",
     "pg": "^7.18.1",
     "uniqid": "^5.2.0"
   },

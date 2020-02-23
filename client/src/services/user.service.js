@@ -1,5 +1,4 @@
 import {apiBaseUrl, history} from "../util/util";
-import {store} from "../util/store";
 
 export const userService = {
     register,
@@ -54,8 +53,8 @@ function getExternalUsers() {
         headers: { 'Content-Type': 'application/json' }
     };
 
-    const stateLength = store.getState().auth.length;
-    const token = store.getState().auth[stateLength - 1].token;
+    const user = JSON.parse(localStorage.getItem('user'));
+    const token = user.token;
 
     return fetch(`${apiBaseUrl}/users/external?token=${token}`, request).then(handleResponse);
 }
@@ -67,23 +66,23 @@ function createExternalUser(user) {
         body: JSON.stringify(user)
     };
 
-    const stateLength = store.getState().auth.length;
-    const token = store.getState().auth[stateLength - 1].token;
+    const userData = JSON.parse(localStorage.getItem('user'));
+    const token = userData.token;
 
     return fetch(`${apiBaseUrl}/users/external/create?token=${token}`, request).then(handleResponse);
 }
 
 function deleteExternalUser(user) {
+    const userId = user.userId;
     const request = {
         method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(user.username)
+        headers: { 'Content-Type': 'application/json' }
     };
 
-    const stateLength = store.getState().auth.length;
-    const token = store.getState().auth[stateLength - 1].token;
+    const userData = JSON.parse(localStorage.getItem('user'));
+    const token = userData.token;
 
-    return fetch(`${apiBaseUrl}/users/external/delete?token=${token}`, request).then(handleResponse);
+    return fetch(`${apiBaseUrl}/users/external/delete?token=${token}&userId=${userId}`, request).then(handleResponse);
 }
 
 function loginHelper(user) {
@@ -136,10 +135,6 @@ function handleResponse(response) {
     return response.text().then(text => {
         const data = text && JSON.parse(text);
         if (!response.ok) {
-            if (response.status === 401) {
-                logout();
-            }
-
             const error = (data && data.message) || response.statusText;
             return Promise.reject(error);
         }

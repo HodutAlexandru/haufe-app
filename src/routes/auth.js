@@ -38,7 +38,8 @@ router.post("/login", (req, res, next) => {
             const token = jwt.sign({
                     userId: fetchedUser.id,
                     username: fetchedUser.username,
-                    role: fetchedUser.role
+                    role: fetchedUser.role,
+                    imgSource: fetchedUser.imgsource
                 },
                 jwtKey,
                 {

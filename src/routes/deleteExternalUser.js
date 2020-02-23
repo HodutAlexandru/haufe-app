@@ -6,9 +6,10 @@ const { pool } = require("../util/db");
 
 const router = express.Router();
 
-router.delete("/users/external/delete/", validateToken, (req, res, next) => {
-   pool.query(`DELETE FROM haufe.users WHERE username = $1`, [req.body.username])
+router.delete("/users/external/delete/", validateToken, (req, res) => {
+   pool.query(`DELETE FROM haufe.users WHERE id = $1`, [req.query.userId])
        .then(() => {
+           console.log(req.query.username);
             getResponse(statusTypes.noContent, res);
        })
        .catch(() => {

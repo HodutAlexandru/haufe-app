@@ -29,8 +29,16 @@
 .toggle-button {
     cursor: pointer;
     position: absolute;
+    width: 100%;
+    justify-content: flex-start;
 }
 
 .refresh-button {
     cursor: pointer;
+    width: 100%;
+    justify-content: flex-start;
+}
+
+.profile-img {
+    width: 5em;
 }

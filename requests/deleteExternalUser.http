@@ -1,8 +1,4 @@
-DELETE http://localhost:3000/api/users/external/delete?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxMnM2cGYyZWs2d2w0MTRmIiwidXNlcm5hbWUiOiJ1c2VybmFtZSIsInJvbGUiOiJpbnRlcm5hbCIsImlhdCI6MTU4MjMxNDM1NywiZXhwIjoxNTgyMzE3OTU3fQ.IOGVwcrstvE4bpJ0wfkfdtsnJaLfnQLV_UdlKxGgNbU
+DELETE http://localhost:3000/api/users/external/delete?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiIxd3dpejJlazZ6Nm0wZGQiLCJ1c2VybmFtZSI6ImludGVybmFsIiwicm9sZSI6ImludGVybmFsIiwiaWF0IjoxNTgyNDc5NjU2LCJleHAiOjE1ODI0ODMyNTZ9.2BxFS8c5gi18KGssobIg1tTuQRDlVQYdC9soX_F6aN8&username=external
 Content-Type: application/json
-
-{
-  "username": "username"
-}
 
 ###

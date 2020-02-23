@@ -1,7 +1,7 @@
 import {getResponse, getResponseWithMessage, statusTypes} from "../helpers/responseTypes";
 
 const Pool = require("pg").Pool;
-const bcrypt = require("bcrypt-nodejs");
+const instagram = require('ml-image-searcher');
 
 const pool = new Pool({
     user: process.env.POSTGRES_USER,
@@ -16,13 +16,17 @@ function createUser(req, res, user) {
             pool.query(`SELECT * FROM haufe.users WHERE username = $1`, [user.username])
                 .then(result => {
                     if (result.rows.length === 0) {
-                        pool.query(`INSERT INTO haufe.users(id, email, username, password, role) values ($1, $2, $3, $4, $5)`, [user.id, user.email, user.username, user.password, user.role])
-                            .then(result => {
-                                getResponse(statusTypes.created, res);
-                            })
-                            .catch(error => {
-                                getResponseWithMessage(statusTypes.internalServerError, res, error);
-                            });
+                        instagram.getImages(user.username).then(result => {
+                            const bestResults = result.htmlFilteredData;
+                            const firstResult = bestResults.split('src="').pop().split('"')[0];
+                            pool.query(`INSERT INTO haufe.users(id, email, username, password, role, imgSource) values ($1, $2, $3, $4, $5, $6)`, [user.id, user.email, user.username, user.password, user.role, firstResult])
+                                .then(result => {
+                                    getResponse(statusTypes.created, res);
+                                })
+                                .catch(error => {
+                                    getResponseWithMessage(statusTypes.internalServerError, res, error);
+                                });
+                        });
                     } else {
                         return getResponseWithMessage(statusTypes.badRequest, res, `User with username ${user.username} already exists!`)
                     }
